@@ -1,10 +1,23 @@
 #!/usr/bin/env python3
 
 from PIL import Image
+import sys
 
 im = Image.open("e71d5e896c525b1ce22808458292f0a3.png")
 
-print("static const unsigned char _charmap[256][8] = {")
+cmode = True
+
+if len(sys.argv) > 1:
+    if sys.argv[1] == '-py':
+        pymode = True
+        cmode = False
+    else:
+        cmode = True
+
+if cmode:
+    print("static const unsigned char _charmap[256][8] = {")
+else:
+    print("charmap = [", end='')
 
 for ch in range(256):
 
@@ -16,7 +29,10 @@ for ch in range(256):
 
     # print("(x, y) = (%d, %d)" % (x_offset, y_offset))
 
-    print("\t/* %3d */ { " % ch, end='')
+    if cmode:
+        print("\t/* %3d */ { " % ch, end='')
+    else:
+        print("[ ", end='')
     # print("\t", end='')
     for y_delta in range(8):
         s = 0
@@ -28,9 +44,14 @@ for ch in range(256):
             #    print(" ", end='')
         # print("\n", end='')
         print("0x%02x, " % s, end='')
-    print("},")
+    if cmode:
+        print("},")
+    else:
+        print("],", end='')
 
+if cmode:
+    print("};")
+    print("const unsigned char *charmap = &_charmap[0][0];")
+else:
+    print("]")
 
-print("};")
-
-print("const unsigned char *charmap = &_charmap[0][0];")
