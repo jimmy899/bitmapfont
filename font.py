@@ -17,7 +17,7 @@ if len(sys.argv) > 1:
 if cmode:
     print("static const unsigned char _charmap[256][8] = {")
 else:
-    print("charmap = [", end='')
+    print("charmap = [ \\")
 
 for ch in range(256):
 
@@ -47,7 +47,10 @@ for ch in range(256):
     if cmode:
         print("},")
     else:
-        print("],", end='')
+        if ch % 4 == 3:
+            print("], \\")
+        else:
+            print("], ", end='')
 
 if cmode:
     print("};")
